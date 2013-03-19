@@ -5,7 +5,7 @@ grayImage = rgb2gray(origImage);
 
 % get the histogram
 % Could have been done with histogram = imhist(grayImage);
-histogram = zeros(255, 1);
+histogram = zeros(256, 1);
 for col=1:M
     for row=1:N
         histogram(grayImage(col, row)) = histogram(grayImage(col, row)) + 1;
@@ -14,7 +14,7 @@ end
 
 % get the cumulative histogram
 % Could have been done with cumHisto2 = cumsum(histogram);
-cumHisto = zeros(255, 1);
+cumHisto = zeros(256, 1);
 for count=2:size(histogram)
     cumHisto(count) = (histogram(count) + cumHisto(count - 1));
 end

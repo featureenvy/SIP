@@ -2,39 +2,18 @@
 % picture from http://dazid.net/post/28231461356/horribly-noisy-and-terribly-underexposed-but-i
 image = imread('myimage.jpg');
 [M,N,S]=size(image);
-% take an interesting part of it
-image = image(500:499+N,1:N,:);
 
 % lets work in hsv space
 image = rgb2hsv(image);
-imageH = image(:, :, 1);
-imageS = image(:, :, 2);
-imageV = image(:, :, 3);
 
 % set up a smoothing filter
-H=fspecial('gaussian',N,12);
-H=H./max(max(H));
+H=fspecial('gaussian',[10 10],100);
+smoothImage = imfilter(image,H);
 
-% smooth all channels independently
-F=fftshift(fft2(imageH));
-SpectrumF=log(1+abs(F));
-G=H.*F;
-smoothImageH = abs(ifft2(ifftshift(G)));
-
-F=fftshift(fft2(imageS));
-SpectrumF=log(1+abs(F));
-G=H.*F;
-smoothImageS = abs(ifft2(ifftshift(G)));
-
-F=fftshift(fft2(imageV));
-SpectrumF=log(1+abs(F));
-G=H.*F;
-smoothImageV = abs(ifft2(ifftshift(G)));
-
-% reassemble the image let's get back into RGB space
-smoothImage = cat(3, smoothImageH, smoothImageS, smoothImageV);
+% get back to rgb space
 rgbImage = hsv2rgb(smoothImage);
 
+% plot the old histograms
 figure;
 subplot(2,3,1);
 imhist(rgbImage(:,:,1));
@@ -43,10 +22,14 @@ imhist(rgbImage(:,:,2));
 subplot(2,3,3);
 imhist(rgbImage(:,:,3));
 
-% adjust the colors so they look a lot better
-rgbImage = imadjust(rgbImage,[.08 .05 .15; .25 .25 .4]);
-% rgbImage = imadjust(rgbImage,[.1 .2 .2; .6 .7 .7]);
+% brighten the image a bit, it is a night sky after all
+% rgbImage = brighten(rgbImage, .3);
 
+% let's get some more contrast in
+low_high = stretchlim(rgbImage, [.03 .97]);
+rgbImage = imadjust(rgbImage, low_high);
+
+% plot the new histograms
 subplot(2,3,4);
 imhist(rgbImage(:,:,1));
 subplot(2,3,5);
