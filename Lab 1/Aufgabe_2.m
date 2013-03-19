@@ -23,11 +23,11 @@ subplot(2,3,3);
 imhist(rgbImage(:,:,3));
 
 % brighten the image a bit, it is a night sky after all
-% rgbImage = brighten(rgbImage, .3);
+rgbImage = brighten(rgbImage, .3);
 
 % let's get some more contrast in
-low_high = stretchlim(rgbImage, [.03 .97]);
-rgbImage = imadjust(rgbImage, low_high);
+% low_high = stretchlim(rgbImage, [.03 .97]);
+% rgbImage = imadjust(rgbImage, low_high);
 
 % plot the new histograms
 subplot(2,3,4);
