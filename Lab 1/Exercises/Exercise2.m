@@ -3,31 +3,32 @@
 image = imread('myimage.jpg');
 [M,N,S]=size(image);
 
-% lets work in hsv space
-image = rgb2hsv(image);
-
 % set up a smoothing filter
 H=fspecial('gaussian',[10 10],100);
 smoothImage = imfilter(image,H);
 
-% get back to rgb space
-rgbImage = hsv2rgb(smoothImage);
-
 % plot the old histograms
 figure;
 subplot(2,3,1);
-imhist(rgbImage(:,:,1));
+imhist(image(:,:,1));
 subplot(2,3,2);
-imhist(rgbImage(:,:,2));
+imhist(image(:,:,2));
 subplot(2,3,3);
-imhist(rgbImage(:,:,3));
+imhist(image(:,:,3));
 
-% brighten the image a bit, it is a night sky after all
-rgbImage = brighten(rgbImage, .3);
+% lets work in hsv space
+smoothImage = rgb2hsv(smoothImage);
 
 % let's get some more contrast in
-% low_high = stretchlim(rgbImage, [.03 .97]);
-% rgbImage = imadjust(rgbImage, low_high);
+low_high = stretchlim(smoothImage, [.03 .97]);
+low_high(1,1) = 0;
+low_high(2,1) = 1;
+smoothImage = imadjust(smoothImage, low_high);
+
+% get back to rgb space
+rgbImage = hsv2rgb(smoothImage);
+
+rgbImage = imadjust(rgbImage, [0 1], [], .8);
 
 % plot the new histograms
 subplot(2,3,4);
@@ -40,7 +41,8 @@ imhist(rgbImage(:,:,3));
 %plot the result!
 figure;
 subplot(1,2,1);
-imshow(hsv2rgb(image));
+% imshow(hsv2rgb(image));
+imshow(image);
 subplot(1,2,2);
 imshow(rgbImage);
 
